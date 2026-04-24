@@ -1,2 +1,22 @@
-# sentiment-cross-domain
-Cross-domain sentiment analysis with data-centric improvements
+# 社交媒体情感分析的跨域泛化
+
+数据挖掘课程项目 · 2025 秋
+
+## 团队
+- 李乘黄 (3220251475)
+- 马啸 (3220251484)
+- THAM WAN HEI (3820251057)
+- 化润宇 (3220251231)
+
+## 项目简介
+基于 SST-2 / IMDB 源域与自建社会事件评论目标域的跨域情感分类,
+聚焦数据中心化改进(弱监督伪标注 + 分布偏移诊断)与轻量领域适配。
+
+## 目录结构
+- `data/` — 数据(原始数据不入库,只放说明)
+- `src/` — 源码
+- `experiments/` — 实验脚本与结果
+- `report/` — 开题/中期/最终报告
+
+## 开题报告
+见 `report/proposal.md`
