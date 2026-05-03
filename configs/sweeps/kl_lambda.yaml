@@ -1,0 +1,17 @@
+# W&B Sweep: KL Lambda 消融
+program: run.py
+method: bayes
+metric:
+  name: val/deltaF1
+  goal: minimize
+parameters:
+  train.lambda_kl:
+    values: [0.0, 0.01, 0.1, 0.5, 1.0]
+  train.lr:
+    min: 1e-6
+    max: 1e-3
+    distribution: log_uniform
+  data.batch_size_t:
+    values: [8, 16, 32]
+  train.ema_decay:
+    values: [0.95, 0.99, 0.999]

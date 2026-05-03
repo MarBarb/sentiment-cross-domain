@@ -1,0 +1,7 @@
+# SST-2 源域配置
+name: sst2
+backbone: bert-base-uncased
+max_length: 128
+batch_size_s: 32
+batch_size_t: 16
+num_workers: 4

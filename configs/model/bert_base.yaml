@@ -1,0 +1,7 @@
+# BERT-base 模型配置
+name: bert_base
+backbone: bert-base-uncased
+dropout: 0.1
+freeze_layers: 6  # 前 50% 层冻结
+use_adapter: false
+adapter_bottleneck: 64

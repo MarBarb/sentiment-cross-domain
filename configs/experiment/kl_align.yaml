@@ -1,0 +1,5 @@
+# E4: BERT + 弱监督 + KL + Adapter (两者组合)
+defaults:
+  - override /data: social
+  - override /model: bert_base
+  - override /train: kl_align

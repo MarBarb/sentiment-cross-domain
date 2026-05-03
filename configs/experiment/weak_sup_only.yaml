@@ -1,0 +1,10 @@
+# E2: BERT + 弱监督伪标 (弱监督独立贡献)
+defaults:
+  - override /data: social
+  - override /model: bert_base
+  - override /train: baseline
+
+train:
+  lambda_kl: 0.0
+  lambda_adv: 0.0
+  use_weak_supervision: true

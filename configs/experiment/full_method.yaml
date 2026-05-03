@@ -1,0 +1,5 @@
+# E5: 完整方案 (KL + 弱监督 + Adapter + DANN)
+defaults:
+  - override /data: social
+  - override /model: bert_base
+  - override /train: adversarial

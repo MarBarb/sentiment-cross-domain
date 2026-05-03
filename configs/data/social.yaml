@@ -1,0 +1,11 @@
+# 社会事件评论目标域配置
+name: social
+backbone: bert-base-uncased
+max_length: 128
+batch_size_s: 32
+batch_size_t: 16
+num_workers: 4
+
+# 目标域数据路径
+target_data_dir: data/processed/
+target_labeled_ratio: 0.2  # 少量标注

@@ -1,0 +1,17 @@
+# 基础训练配置
+optimizer: adamw
+lr: 2.0e-5
+lr_head: 1.0e-3
+lr_adapter: 5.0e-4
+weight_decay: 0.01
+epochs: 30
+lambda_kl: 0.1
+lambda_adv: 0.0
+warmup_epochs: 2
+grad_clip: 1.0
+ema_decay: 0.99
+patience: 5
+log_interval: 50
+use_pos_weight: true
+use_adversarial: false
+use_weak_supervision: false

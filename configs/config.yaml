@@ -1,0 +1,9 @@
+# 默认配置 — 跨域情感分析
+defaults:
+  - data: social
+  - model: bert_base
+  - train: baseline
+  - _self_
+
+project: sentiment-cross-domain
+seed: 42

@@ -1,0 +1,3 @@
+# TF-IDF + LR 基线 (E0)
+name: tfidf_lr
+max_features: 50000

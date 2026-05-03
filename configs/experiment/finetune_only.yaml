@@ -1,0 +1,12 @@
+# E3: BERT + Adapter (适配器独立贡献)
+defaults:
+  - override /data: social
+  - override /model: bert_base
+  - override /train: baseline
+
+model:
+  use_adapter: true
+
+train:
+  lambda_kl: 0.0
+  lambda_adv: 0.0

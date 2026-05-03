@@ -1,0 +1,10 @@
+# E1: BERT zero-shot (跨域衰减基准)
+defaults:
+  - override /data: social
+  - override /model: bert_base
+  - override /train: baseline
+
+train:
+  lambda_kl: 0.0
+  lambda_adv: 0.0
+  epochs: 0

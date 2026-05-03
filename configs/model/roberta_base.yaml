@@ -1,0 +1,7 @@
+# RoBERTa-base 模型配置 (E6)
+name: roberta_base
+backbone: roberta-base
+dropout: 0.1
+freeze_layers: 6
+use_adapter: true
+adapter_bottleneck: 64

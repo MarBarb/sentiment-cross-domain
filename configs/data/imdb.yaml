@@ -1,0 +1,7 @@
+# IMDB 源域配置
+name: imdb
+backbone: bert-base-uncased
+max_length: 256
+batch_size_s: 16
+batch_size_t: 8
+num_workers: 4

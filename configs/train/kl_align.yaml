@@ -1,0 +1,8 @@
+# KL 对齐训练配置 (E4)
+defaults:
+  - baseline
+
+lambda_kl: 0.1
+lambda_adv: 0.0
+use_weak_supervision: true
+use_adapter: true

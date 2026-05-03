@@ -1,0 +1,5 @@
+# E6: RoBERTa + 完整方案
+defaults:
+  - override /data: social
+  - override /model: roberta_base
+  - override /train: adversarial
