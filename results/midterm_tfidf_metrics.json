@@ -1,0 +1,76 @@
+{
+  "seed": 42,
+  "source_path": "data/processed/source_sample.csv",
+  "target_path": "data/processed/social_sample.csv",
+  "dataset": {
+    "source_train": {
+      "n": 32,
+      "positive": 17,
+      "negative": 15,
+      "pos_rate": 0.53125,
+      "avg_chars": 12.375
+    },
+    "source_test": {
+      "n": 12,
+      "positive": 6,
+      "negative": 6,
+      "pos_rate": 0.5,
+      "avg_chars": 11.666666666666666
+    },
+    "target_train": {
+      "n": 20,
+      "positive": 8,
+      "negative": 12,
+      "pos_rate": 0.4,
+      "avg_chars": 13.4
+    },
+    "target_val": {
+      "n": 9,
+      "positive": 3,
+      "negative": 6,
+      "pos_rate": 0.3333333333333333,
+      "avg_chars": 12.222222222222221
+    },
+    "target_test": {
+      "n": 12,
+      "positive": 4,
+      "negative": 8,
+      "pos_rate": 0.3333333333333333,
+      "avg_chars": 12.666666666666666
+    }
+  },
+  "audit": {
+    "source_char_ngrams": 1258,
+    "target_char_ngrams": 1283,
+    "shared_char_ngrams": 44,
+    "char_ngram_jaccard": 0.01762114537444934
+  },
+  "experiments": [
+    {
+      "method": "E0-lite: source TF-IDF+LR",
+      "tau": 0.5700000000000001,
+      "target_val_macro_f1_at_tau": 0.6785714285714286,
+      "F1_s": 0.5804195804195804,
+      "F1_t": 0.7777777777777778,
+      "deltaF1": -0.19735819735819737,
+      "AUC_s": 0.7777777777777778,
+      "AUC_t": 0.875,
+      "accuracy_t": 0.8333333333333334,
+      "recall_negative_t": 1.0,
+      "recall_positive_t": 0.5
+    },
+    {
+      "method": "E1-lite: source + target calibration",
+      "tau": 0.45000000000000007,
+      "target_val_macro_f1_at_tau": 0.55,
+      "F1_s": 0.7333333333333334,
+      "F1_t": 0.8285714285714285,
+      "deltaF1": -0.09523809523809512,
+      "AUC_s": 0.75,
+      "AUC_t": 1.0,
+      "accuracy_t": 0.8333333333333334,
+      "recall_negative_t": 0.75,
+      "recall_positive_t": 1.0
+    }
+  ]
+}

@@ -1,83 +1,87 @@
-"""Hydra 入口 — 跨域情感分析实验"""
+"""实验入口.
+
+中期阶段提供一个无重依赖的 TF-IDF+LR 可复现闭环：
+
+    python run.py experiment=source_only model=tfidf_lr
+
+保留 `key=value` 风格参数，方便之后平滑迁回 Hydra。
+"""
+from __future__ import annotations
+
+import argparse
+import json
 import logging
+import sys
 from pathlib import Path
 
-import hydra
-from omegaconf import DictConfig, OmegaConf
-
-from src.utils.seed import set_seed
+from src.baselines import run_tfidf_experiment
 
 logger = logging.getLogger(__name__)
 
 
-@hydra.main(config_path="configs", config_name="config", version_base=None)
-def main(cfg: DictConfig):
-    # 1. 设置随机种子
-    set_seed(cfg.seed)
-    logger.info(f"Config:\n{OmegaConf.to_yaml(cfg)}")
+def _parse_kv_args(argv):
+    parsed = {}
+    positional = []
+    for arg in argv:
+        if "=" in arg and not arg.startswith("--"):
+            key, value = arg.split("=", 1)
+            parsed[key.strip()] = value.strip()
+        else:
+            positional.append(arg)
+    return parsed, positional
 
-    # 2. 初始化 W&B
-    try:
-        import wandb
-        wandb.init(
-            project=cfg.project,
-            config=OmegaConf.to_container(cfg, resolve=True),
-            reinit=True,
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="跨域情感分析实验入口")
+    parser.add_argument("--model", default="tfidf_lr", help="当前可运行: tfidf_lr")
+    parser.add_argument("--experiment", default="source_only", help="实验名，用于兼容原 Hydra 参数")
+    parser.add_argument("--source-path", default="data/processed/source_sample.csv")
+    parser.add_argument("--target-path", default="data/processed/social_sample.csv")
+    parser.add_argument("--output-dir", default="results")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--max-features", type=int, default=3000)
+    parser.add_argument("--epochs", type=int, default=900)
+    return parser
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    kv_args, remaining = _parse_kv_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(remaining)
+
+    # 兼容原命令：python run.py experiment=source_only model=tfidf_lr
+    if "model" in kv_args:
+        args.model = kv_args["model"]
+    if "experiment" in kv_args:
+        args.experiment = kv_args["experiment"]
+    if "seed" in kv_args:
+        args.seed = int(kv_args["seed"])
+
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+
+    if args.model != "tfidf_lr":
+        raise SystemExit(
+            f"当前轻量入口只支持 model=tfidf_lr，收到 model={args.model}。"
+            "BERT/RoBERTa 训练需安装 requirements.txt 并接通 datamodule。"
         )
-    except Exception as e:
-        logger.warning(f"W&B init failed: {e}. Continuing without W&B.")
 
-    # 3. 数据
-    from src.data import CrossDomainDataModule
-    datamodule = CrossDomainDataModule(cfg.data)
-    datamodule.setup()
+    summary, metrics_path, pred_path = run_tfidf_experiment(
+        source_path=args.source_path,
+        target_path=args.target_path,
+        output_dir=args.output_dir,
+        seed=args.seed,
+        max_features=args.max_features,
+        epochs=args.epochs,
+    )
 
-    # 4. 模型
-    if cfg.model.name == "tfidf_lr":
-        return run_tfidf_baseline(datamodule, cfg)
+    logger.info("Experiment %s complete.", args.experiment)
+    logger.info("Metrics saved to %s", metrics_path)
+    logger.info("Predictions saved to %s", pred_path)
 
-    from src.models import SentimentDomainAdaptModel
-    model = SentimentDomainAdaptModel(cfg.model)
-
-    # 5. 训练
-    from src.training import Trainer
-    trainer = Trainer(model, datamodule, cfg.train)
-    checkpoint = trainer.fit()
-
-    # 6. 评估
-    from src.evaluation import Evaluator
-    evaluator = Evaluator(model)
-    # metrics = evaluator.evaluate(loader_s_test, loader_t_val, loader_t_test)
-
-    # 7. 保存
-    output_dir = Path(hydra.utils.get_original_cwd()) / "checkpoints"
-    output_dir.mkdir(exist_ok=True)
-    # torch.save(checkpoint, output_dir / f"checkpoint_seed{cfg.seed}.pt")
-
-    logger.info("Experiment complete!")
-
-    try:
-        import wandb
-        wandb.finish()
-    except Exception:
-        pass
-
-
-def run_tfidf_baseline(datamodule, cfg):
-    """E0: TF-IDF + Logistic Regression 基线"""
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import f1_score
-
-    logger.info("Running TF-IDF + LR baseline (E0)...")
-
-    # TODO: 实现 TF-IDF + LR 基线
-    # 1. 在源域上 fit TF-IDF
-    # 2. 训练 LR
-    # 3. 在目标域上评估
-
-    logger.info("TF-IDF baseline complete.")
+    print(json.dumps(summary["experiments"], ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
+

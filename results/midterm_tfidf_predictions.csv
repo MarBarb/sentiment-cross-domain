@@ -1,0 +1,49 @@
+method,split,text,label,prob_positive,prediction,correct
+E0-lite: source TF-IDF+LR,source_test,影片后半段爆发力很强值得二刷,1,0.679173,1,1
+E0-lite: source TF-IDF+LR,source_test,情感表达克制但非常动人,1,0.545868,0,0
+E0-lite: source TF-IDF+LR,source_test,喜剧桥段自然观众反应很好,1,0.712506,1,1
+E0-lite: source TF-IDF+LR,source_test,故事完整配角也有亮点,1,0.741615,1,1
+E0-lite: source TF-IDF+LR,source_test,这本书把复杂问题讲得很清楚,1,0.562946,0,0
+E0-lite: source TF-IDF+LR,source_test,镜头语言成熟氛围营造出色,1,0.563976,0,0
+E0-lite: source TF-IDF+LR,source_test,剧情漏洞太多完全说服不了我,0,0.327787,0,1
+E0-lite: source TF-IDF+LR,source_test,人物对白像背稿缺乏真实感,0,0.536079,0,1
+E0-lite: source TF-IDF+LR,source_test,节奏忽快忽慢观感很割裂,0,0.638156,1,0
+E0-lite: source TF-IDF+LR,source_test,整本书堆砌概念没有实际内容,0,0.282055,0,1
+E0-lite: source TF-IDF+LR,source_test,角色关系写得很敷衍,0,0.713093,1,0
+E0-lite: source TF-IDF+LR,source_test,结局强行反转让人失望,0,0.452965,0,1
+E0-lite: source TF-IDF+LR,target_test,志愿服务很有秩序效率也高,1,0.675814,1,1
+E0-lite: source TF-IDF+LR,target_test,官方直播解释了关键疑问,1,0.563976,0,0
+E0-lite: source TF-IDF+LR,target_test,居民群里互相帮忙信息很有用,1,0.675814,1,1
+E0-lite: source TF-IDF+LR,target_test,整改名单公开后终于有进展,1,0.563976,0,0
+E0-lite: source TF-IDF+LR,target_test,又让基层反复填表完全是形式主义,0,0.408358,0,1
+E0-lite: source TF-IDF+LR,target_test,明明承诺今天解决结果又延期,0,0.441722,0,1
+E0-lite: source TF-IDF+LR,target_test,现场有人插队没人管体验很差,0,0.335692,0,1
+E0-lite: source TF-IDF+LR,target_test,通知半夜才发第二天根本来不及,0,0.563976,0,1
+E0-lite: source TF-IDF+LR,target_test,评论区全是水军正常意见被淹没,0,0.563976,0,1
+E0-lite: source TF-IDF+LR,target_test,处理方案只照顾少数人不公平,0,0.563976,0,1
+E0-lite: source TF-IDF+LR,target_test,投诉三次都没有回音,0,0.526877,0,1
+E0-lite: source TF-IDF+LR,target_test,设备故障影响出行却没人说明,0,0.563976,0,1
+E1-lite: source + target calibration,source_test,影片后半段爆发力很强值得二刷,1,0.611093,1,1
+E1-lite: source + target calibration,source_test,情感表达克制但非常动人,1,0.48732,1,1
+E1-lite: source + target calibration,source_test,喜剧桥段自然观众反应很好,1,0.646121,1,1
+E1-lite: source + target calibration,source_test,故事完整配角也有亮点,1,0.713089,1,1
+E1-lite: source + target calibration,source_test,这本书把复杂问题讲得很清楚,1,0.506993,1,1
+E1-lite: source + target calibration,source_test,镜头语言成熟氛围营造出色,1,0.487864,1,1
+E1-lite: source + target calibration,source_test,剧情漏洞太多完全说服不了我,0,0.34376,0,1
+E1-lite: source + target calibration,source_test,人物对白像背稿缺乏真实感,0,0.489205,1,0
+E1-lite: source + target calibration,source_test,节奏忽快忽慢观感很割裂,0,0.514806,1,0
+E1-lite: source + target calibration,source_test,整本书堆砌概念没有实际内容,0,0.196986,0,1
+E1-lite: source + target calibration,source_test,角色关系写得很敷衍,0,0.64091,1,0
+E1-lite: source + target calibration,source_test,结局强行反转让人失望,0,0.384015,0,1
+E1-lite: source + target calibration,target_test,志愿服务很有秩序效率也高,1,0.639799,1,1
+E1-lite: source + target calibration,target_test,官方直播解释了关键疑问,1,0.573139,1,1
+E1-lite: source + target calibration,target_test,居民群里互相帮忙信息很有用,1,0.612407,1,1
+E1-lite: source + target calibration,target_test,整改名单公开后终于有进展,1,0.60952,1,1
+E1-lite: source + target calibration,target_test,又让基层反复填表完全是形式主义,0,0.310259,0,1
+E1-lite: source + target calibration,target_test,明明承诺今天解决结果又延期,0,0.343133,0,1
+E1-lite: source + target calibration,target_test,现场有人插队没人管体验很差,0,0.316322,0,1
+E1-lite: source + target calibration,target_test,通知半夜才发第二天根本来不及,0,0.389326,0,1
+E1-lite: source + target calibration,target_test,评论区全是水军正常意见被淹没,0,0.487864,1,0
+E1-lite: source + target calibration,target_test,处理方案只照顾少数人不公平,0,0.485719,1,0
+E1-lite: source + target calibration,target_test,投诉三次都没有回音,0,0.362552,0,1
+E1-lite: source + target calibration,target_test,设备故障影响出行却没人说明,0,0.441689,0,1

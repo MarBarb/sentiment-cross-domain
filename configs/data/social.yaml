@@ -8,4 +8,6 @@ num_workers: 4
 
 # 目标域数据路径
 target_data_dir: data/processed/
+source_data_path: data/processed/source_sample.csv
+target_data_path: data/processed/social_sample.csv
 target_labeled_ratio: 0.2  # 少量标注
