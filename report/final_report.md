@@ -6,7 +6,7 @@
 - **仓库链接**：https://github.com/MarBarb/sentiment-cross-domain
 - **团队成员**：李乘黄、马啸、THAM WAN HEI、化润宇
 - **最终交付日期**：2026-06-03
-- **复现命令**：`PYTHON=/path/to/python ./scripts/run_final.sh`
+- **复现命令**：`./scripts/run_final.sh && python scripts/verify_final.py`
 
 ## 1. 问题定义与目标
 
@@ -74,8 +74,8 @@ DeltaF1 最平衡方法为 **E6 Backbone replacement char1-5**，DeltaF1=-0.019�
 核心命令：
 
 ```bash
-PYTHON=/Users/lichenghuang/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 ./scripts/run_final.sh
-PYTHON=/Users/lichenghuang/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/verify_final.py
+./scripts/run_final.sh
+python scripts/verify_final.py
 ```
 
 核心产物：

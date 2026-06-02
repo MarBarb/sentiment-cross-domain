@@ -36,11 +36,13 @@ def main() -> None:
     metrics_path = ROOT / "results/final_metrics.json"
     summary_path = ROOT / "results/final_summary.csv"
     report_md = ROOT / "report/final_report.md"
+    report_pdf = ROOT / "report/final_report.pdf"
 
     require(source.exists(), "source_full.csv exists")
     require(target.exists(), "social_full.csv exists")
     require(metrics_path.exists(), "final_metrics.json exists")
     require(summary_path.exists(), "final_summary.csv exists")
+    require(report_pdf.exists() and report_pdf.stat().st_size > 50_000, "final_report.pdf exists and is non-empty")
 
     source_counts = count_splits(source)
     target_counts = count_splits(target)
