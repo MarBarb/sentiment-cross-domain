@@ -1,6 +1,7 @@
 """模型架构测试"""
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 from src.models.layers import AdapterLayer, GradientReversalLayer
 
 

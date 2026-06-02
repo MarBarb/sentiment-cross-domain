@@ -168,6 +168,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Downloaded public raw corpora; regenerate with scripts/prepare_real_data.py
+data/raw/*.csv
+!data/raw/.gitkeep
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

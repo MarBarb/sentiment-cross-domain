@@ -1,0 +1,76 @@
+{
+  "seed": 42,
+  "source_path": "data/processed/source_full.csv",
+  "target_path": "data/processed/social_full.csv",
+  "dataset": {
+    "source_train": {
+      "n": 5600,
+      "positive": 2800,
+      "negative": 2800,
+      "pos_rate": 0.5,
+      "avg_chars": 22.873392857142857
+    },
+    "source_test": {
+      "n": 1200,
+      "positive": 600,
+      "negative": 600,
+      "pos_rate": 0.5,
+      "avg_chars": 22.275
+    },
+    "target_train": {
+      "n": 600,
+      "positive": 200,
+      "negative": 400,
+      "pos_rate": 0.3333333333333333,
+      "avg_chars": 51.925
+    },
+    "target_val": {
+      "n": 600,
+      "positive": 200,
+      "negative": 400,
+      "pos_rate": 0.3333333333333333,
+      "avg_chars": 56.01
+    },
+    "target_test": {
+      "n": 1200,
+      "positive": 400,
+      "negative": 800,
+      "pos_rate": 0.3333333333333333,
+      "avg_chars": 54.52166666666667
+    }
+  },
+  "audit": {
+    "source_char_ngrams": 212468,
+    "target_char_ngrams": 231390,
+    "shared_char_ngrams": 16976,
+    "char_ngram_jaccard": 0.03976742987523484
+  },
+  "experiments": [
+    {
+      "method": "E0-lite: source TF-IDF+LR",
+      "tau": 0.5000000000000001,
+      "target_val_macro_f1_at_tau": 0.6162280701754386,
+      "F1_s": 0.8403649596907594,
+      "F1_t": 0.6365018381868741,
+      "deltaF1": 0.2038631215038853,
+      "AUC_s": 0.9176333333333333,
+      "AUC_t": 0.7376203125,
+      "accuracy_t": 0.7316666666666667,
+      "recall_negative_t": 0.9325,
+      "recall_positive_t": 0.33
+    },
+    {
+      "method": "E1-lite: source + target calibration",
+      "tau": 0.4700000000000001,
+      "target_val_macro_f1_at_tau": 0.8608898832017007,
+      "F1_s": 0.7756823708033196,
+      "F1_t": 0.8659373659373659,
+      "deltaF1": -0.09025499513404633,
+      "AUC_s": 0.9175611111111112,
+      "AUC_t": 0.953278125,
+      "accuracy_t": 0.875,
+      "recall_negative_t": 0.85125,
+      "recall_positive_t": 0.9225
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 """实验入口.
 
-中期阶段提供一个无重依赖的 TF-IDF+LR 可复现闭环：
+支持三个无需 GPU 的可复现实验：
 
     python run.py experiment=source_only model=tfidf_lr
+    python run.py experiment=baseline
+    python run.py experiment=final
 
 保留 `key=value` 风格参数，方便之后平滑迁回 Hydra。
 """
@@ -15,6 +17,7 @@ import sys
 from pathlib import Path
 
 from src.baselines import run_tfidf_experiment
+from src.experiments import run_final_experiments
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +37,9 @@ def _parse_kv_args(argv):
 def build_parser():
     parser = argparse.ArgumentParser(description="跨域情感分析实验入口")
     parser.add_argument("--model", default="tfidf_lr", help="当前可运行: tfidf_lr")
-    parser.add_argument("--experiment", default="source_only", help="实验名，用于兼容原 Hydra 参数")
-    parser.add_argument("--source-path", default="data/processed/source_sample.csv")
-    parser.add_argument("--target-path", default="data/processed/social_sample.csv")
+    parser.add_argument("--experiment", default="source_only", help="source_only、baseline 或 final")
+    parser.add_argument("--source-path", default=None)
+    parser.add_argument("--target-path", default=None)
     parser.add_argument("--output-dir", default="results")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-features", type=int, default=3000)
@@ -60,15 +63,48 @@ def main(argv=None):
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
 
+    if args.experiment == "final":
+        source_path = args.source_path or "data/processed/source_full.csv"
+        target_path = args.target_path or "data/processed/social_full.csv"
+        summary, metrics_path = run_final_experiments(
+            source_path=source_path,
+            target_path=target_path,
+            output_dir=args.output_dir,
+        )
+        logger.info("Final experiment matrix complete.")
+        logger.info("Metrics saved to %s", metrics_path)
+        print(json.dumps(summary["summary"], ensure_ascii=False, indent=2))
+        return
+
+    if args.experiment == "baseline":
+        source_path = args.source_path or "data/processed/source_full.csv"
+        target_path = args.target_path or "data/processed/social_full.csv"
+        summary, metrics_path, pred_path = run_tfidf_experiment(
+            source_path=source_path,
+            target_path=target_path,
+            output_dir=args.output_dir,
+            seed=args.seed,
+            max_features=args.max_features,
+            epochs=args.epochs,
+            artifact_prefix="baseline_tfidf",
+        )
+        logger.info("Baseline experiment complete.")
+        logger.info("Metrics saved to %s", metrics_path)
+        logger.info("Predictions saved to %s", pred_path)
+        print(json.dumps(summary["experiments"], ensure_ascii=False, indent=2))
+        return
+
     if args.model != "tfidf_lr":
         raise SystemExit(
             f"当前轻量入口只支持 model=tfidf_lr，收到 model={args.model}。"
             "BERT/RoBERTa 训练需安装 requirements.txt 并接通 datamodule。"
         )
 
+    source_path = args.source_path or "data/processed/source_sample.csv"
+    target_path = args.target_path or "data/processed/social_sample.csv"
     summary, metrics_path, pred_path = run_tfidf_experiment(
-        source_path=args.source_path,
-        target_path=args.target_path,
+        source_path=source_path,
+        target_path=target_path,
         output_dir=args.output_dir,
         seed=args.seed,
         max_features=args.max_features,
@@ -84,4 +120,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
-

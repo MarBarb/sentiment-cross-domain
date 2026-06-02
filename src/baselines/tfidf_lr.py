@@ -178,6 +178,7 @@ def run_tfidf_experiment(
     seed=42,
     max_features=3000,
     epochs=900,
+    artifact_prefix="midterm_tfidf",
 ):
     """运行 E0-lite 和 target-calibrated 轻量实验."""
     splits = load_cross_domain_splits(source_path=source_path, target_path=target_path)
@@ -227,15 +228,15 @@ def run_tfidf_experiment(
         ],
     }
 
-    metrics_path = output_dir / "midterm_tfidf_metrics.json"
+    metrics_path = output_dir / f"{artifact_prefix}_metrics.json"
     metrics_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    pred_path = output_dir / "midterm_tfidf_predictions.csv"
+    pred_path = output_dir / f"{artifact_prefix}_predictions.csv"
     import csv
 
     fieldnames = ["method", "split", "text", "label", "prob_positive", "prediction", "correct"]
     with pred_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for result in (source_result, adapt_result):
             for split_name in ("source_test", "target_test"):

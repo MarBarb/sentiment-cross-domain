@@ -12,5 +12,10 @@ setup(
         "hydra-core>=1.3.0",
         "wandb>=0.17.0",
         "scikit-learn>=1.4.0",
+        "numpy>=1.26.0",
+        "pandas>=2.2.0",
+        "pillow>=10.0.0",
+        "reportlab>=4.0.0",
+        "regex>=2024.4.0",
     ],
 )

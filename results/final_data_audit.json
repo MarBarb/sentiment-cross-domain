@@ -1,0 +1,72 @@
+{
+  "source": {
+    "raw_path": "data/raw/waimai_10k.csv",
+    "raw_rows": 11987,
+    "processed_path": "data/processed/source_full.csv",
+    "sampled_rows": 8000,
+    "splits": {
+      "test": {
+        "n": 1200,
+        "positive": 600,
+        "negative": 600,
+        "positive_rate": 0.5,
+        "avg_chars": 22.275
+      },
+      "train": {
+        "n": 5600,
+        "positive": 2800,
+        "negative": 2800,
+        "positive_rate": 0.5,
+        "avg_chars": 22.873392857142857
+      },
+      "val": {
+        "n": 1200,
+        "positive": 600,
+        "negative": 600,
+        "positive_rate": 0.5,
+        "avg_chars": 22.98
+      }
+    }
+  },
+  "target": {
+    "raw_path": "data/raw/weibo_senti_100k.csv",
+    "raw_rows": 119000,
+    "processed_path": "data/processed/social_full.csv",
+    "sampled_rows": 6000,
+    "splits": {
+      "test": {
+        "n": 1200,
+        "positive": 400,
+        "negative": 800,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 54.52166666666667
+      },
+      "train": {
+        "n": 600,
+        "positive": 200,
+        "negative": 400,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 51.925
+      },
+      "unlabeled": {
+        "n": 3600,
+        "positive": 1200,
+        "negative": 2400,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 53.653333333333336
+      },
+      "val": {
+        "n": 600,
+        "positive": 200,
+        "negative": 400,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 56.01
+      }
+    }
+  },
+  "seed": 42,
+  "sources": {
+    "source_url": "https://raw.githubusercontent.com/SophonPlus/ChineseNlpCorpus/master/datasets/waimai_10k/waimai_10k.csv",
+    "target_url": "https://huggingface.co/datasets/dirtycomputer/weibo_senti_100k/resolve/main/weibo_senti_100k.csv"
+  }
+}

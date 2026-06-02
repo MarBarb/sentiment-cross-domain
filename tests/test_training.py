@@ -1,6 +1,7 @@
 """训练模块测试"""
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 from src.training.kl_loss import gaussian_kl
 from src.training.ema import EMAMeter
 
