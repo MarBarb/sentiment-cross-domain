@@ -1,0 +1,8 @@
+flowchart LR
+  A["Public corpora<br/>waimai_10k + weibo_senti_100k"] --> B["TextCleaner<br/>de-noise + dedupe"]
+  B --> C["Split builder<br/>train / val / test / unlabeled"]
+  C --> D["Feature encoder<br/>char n-gram + lexicon"]
+  D --> E["E0-E6 experiment runner<br/>3 seeds"]
+  E --> F["Target-val threshold<br/>Macro-F1 + negative recall"]
+  F --> G["Metrics and errors<br/>JSON / CSV / PNG"]
+  G --> H["Final report and defense<br/>PDF / PPTX / scripts"]

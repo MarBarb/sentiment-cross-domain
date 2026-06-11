@@ -172,6 +172,9 @@ cython_debug/
 data/raw/*.csv
 !data/raw/.gitkeep
 
+# Local generated presentation workspaces; final handoff files live in presentation/
+outputs/
+
 # macOS Finder metadata
 .DS_Store
 

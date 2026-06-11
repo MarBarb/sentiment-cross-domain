@@ -110,4 +110,11 @@ E3 的目标域 Macro-F1 最佳；E6 的 DeltaF1 最平衡。至少一个方法�
 - `results/final_error_cases.csv`
 - `results/final_metrics_chart.png`
 
+## 答辩材料
+
+- `presentation/final_defense_7min.pptx`：7 分钟最终汇报 PPT。
+- `presentation/speaker_notes_7min.md`：逐页讲稿。
+- `presentation/system_demo_3min_script.md`：3 分钟系统演示脚本。
+- `presentation/recording_guide.md`：录屏和拍摄指南。
+
 中期材料仍保留在 `report/midterm.md` / `report/midterm.pdf`，开题材料见 `report/proposal.md`。
