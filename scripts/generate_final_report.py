@@ -1,6 +1,7 @@
 """根据最终实验结果生成 Markdown/PDF 报告."""
 from __future__ import annotations
 
+import csv
 import json
 import sys
 from html import escape
@@ -16,17 +17,60 @@ def fmt(x, digits=3):
     return f"{float(x):.{digits}f}"
 
 
+def truncate_text(text: str, limit: int = 88) -> str:
+    text = " ".join(str(text).split())
+    if len(text) <= limit:
+        return text
+    return text[: limit - 1] + "..."
+
+
+def load_error_examples(limit: int = 2) -> list[dict[str, str]]:
+    path = ROOT / "results/final_error_cases.csv"
+    if not path.exists():
+        return []
+    rows: list[dict[str, str]] = []
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        for row in csv.DictReader(f):
+            rows.append(row)
+            if len(rows) >= limit:
+                break
+    return rows
+
+
 def build_markdown() -> str:
     metrics = json.loads((ROOT / "results/final_metrics.json").read_text(encoding="utf-8"))
     audit = json.loads((ROOT / "results/final_data_audit.json").read_text(encoding="utf-8"))
     summary = metrics["summary"]
     best = max(summary, key=lambda row: row["F1_t_mean"])
     best_balanced = min(summary, key=lambda row: abs(row["deltaF1_mean"]))
+    error_examples = load_error_examples()
 
     lines = []
-    lines.append("# 社交媒体情感分析的跨域泛化：最终项目报告")
+    lines.append("# 数据挖掘课程最终项目报告")
     lines.append("")
-    lines.append("## 0. 项目基本信息")
+    lines.append("**题目**：社交媒体情感分析的跨域泛化：面向分布偏移的 Data-Centric 改进")
+    lines.append("")
+    lines.append("**团队成员**：李乘黄、马啸、THAM WAN HEI、化润宇")
+    lines.append("")
+    lines.append("**仓库链接**：https://github.com/MarBarb/sentiment-cross-domain")
+    lines.append("")
+    lines.append("**最终交付日期**：2026-06-03")
+    lines.append("")
+    lines.append("## 摘要")
+    lines.append("")
+    lines.append(
+        "本项目研究评论源域到微博社交媒体目标域的二分类情感迁移问题。"
+        "我们使用真实公开语料构造源域 8000 条、目标域 6000 条数据，"
+        "并围绕弱监督伪标注、少量目标域校准、领域特征过滤和 backbone 替换设计 E0-E6 消融实验。"
+        f"结果显示，{best['method_id']} {best['method']} 在目标域取得最高 Macro-F1="
+        f"{fmt(best['F1_t_mean'])}，{best_balanced['method_id']} {best_balanced['method']} 的 DeltaF1="
+        f"{fmt(best_balanced['deltaF1_mean'])} 最平衡。"
+        "失败分析表明，微博中的转发链、表情、反讽和局部情感词冲突仍是浅层特征方法的主要误差来源。"
+    )
+    lines.append("")
+    lines.append("**关键词**：跨域情感分析；领域偏移；弱监督；消融实验；Macro-F1")
+    lines.append("")
+    lines.append("## 1. 项目基本信息")
     lines.append("")
     lines.append("- **项目名称**：社交媒体情感分析的跨域泛化：面向分布偏移的 Data-Centric 改进")
     lines.append("- **仓库链接**：https://github.com/MarBarb/sentiment-cross-domain")
@@ -34,7 +78,7 @@ def build_markdown() -> str:
     lines.append("- **最终交付日期**：2026-06-03")
     lines.append("- **复现命令**：`./scripts/run_final.sh && python scripts/verify_final.py`")
     lines.append("")
-    lines.append("## 1. 问题定义与目标")
+    lines.append("## 2. 问题定义与目标")
     lines.append("")
     lines.append(
         "项目目标是从评论源域迁移到微博社交媒体目标域，构建二分类情感模型。"
@@ -44,12 +88,14 @@ def build_markdown() -> str:
     lines.append("")
     lines.append("验收指标包括 Macro-F1、Weighted-F1、AUC、DeltaF1、目标域负面召回率，以及特征层 KL/MMD 诊断。")
     lines.append("")
-    lines.append("## 2. 数据来源与审计")
+    lines.append("## 3. 数据来源与审计")
     lines.append("")
     lines.append("数据来自公开语料，可由 `scripts/prepare_real_data.py` 重新生成：")
     lines.append("")
     lines.append(f"- 源域：ChineseNlpCorpus `waimai_10k`，下载地址：{audit['sources']['source_url']}")
     lines.append(f"- 目标域：HuggingFace `dirtycomputer/weibo_senti_100k`，下载地址：{audit['sources']['target_url']}")
+    lines.append("")
+    lines.append("**表 1 数据集规模与划分**")
     lines.append("")
     lines.append("| 域 | raw rows | processed rows | train | val | test | unlabeled | 正例比例 | 平均长度 |")
     lines.append("| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |")
@@ -70,9 +116,11 @@ def build_markdown() -> str:
     lines.append("")
     lines.append("目标域按负:正=2:1 构造，模拟社会事件评论中负面/质疑声音偏重的场景；仅 10% 作为有标注训练集，60% 作为未标注数据用于弱监督伪标注。")
     lines.append("")
-    lines.append("## 3. 方法与消融矩阵")
+    lines.append("## 4. 方法与消融矩阵")
     lines.append("")
     lines.append("最终实验覆盖 **E0-E6** 七个方法，并对每个方法运行 3 个随机种子。")
+    lines.append("")
+    lines.append("**表 2 方法与消融设置**")
     lines.append("")
     lines.append("| ID | 方法 | 说明 |")
     lines.append("| :--- | :--- | :--- |")
@@ -88,9 +136,11 @@ def build_markdown() -> str:
     for row in summary:
         lines.append(f"| {row['method_id']} | {row['method']} | {method_notes[row['method_id']]} |")
     lines.append("")
-    lines.append("## 4. 最终实验结果")
+    lines.append("## 5. 最终实验结果")
     lines.append("")
     lines.append("所有结果均为 3 个随机种子（42/123/456）的均值与标准差。")
+    lines.append("")
+    lines.append("**表 3 最终实验指标汇总**")
     lines.append("")
     lines.append("| ID | F1(source) | F1(target) | DeltaF1 | AUC(target) | Neg Recall | Pos Recall | Weighted-F1 |")
     lines.append("| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |")
@@ -108,7 +158,9 @@ def build_markdown() -> str:
     lines.append("")
     lines.append("结论：少量目标域金标校准（E3）是收益最大的模块；弱监督伪标注（E2）能将目标域 F1 从 E1 的 0.644 提升到 0.753；E5 虽然降低了 MMD，但过度过滤导致正例召回下降，是一个负向消融。")
     lines.append("")
-    lines.append("## 5. 错误分析")
+    lines.append("![图 1 最终实验结果对比](../results/final_metrics_chart.png)")
+    lines.append("")
+    lines.append("## 6. 失败案例与局限分析")
     lines.append("")
     lines.append("错误样本保存在 `results/final_error_cases.csv`。主要失败模式包括：")
     lines.append("")
@@ -116,7 +168,20 @@ def build_markdown() -> str:
     lines.append("- 目标域中“祝福/哈哈/鼓掌”等词在不同语境下可能同时出现在正负样本中，造成词面冲突。")
     lines.append("- 领域特征过滤能够降低 MMD，但如果过滤过强，会删除目标域关键情感触发词。")
     lines.append("")
-    lines.append("## 6. 复现与交付")
+    if error_examples:
+        lines.append("**表 4 失败案例摘录**")
+        lines.append("")
+        lines.append("| 方法 | 真实标签 | 预测 | 正类概率 | 文本摘录 |")
+        lines.append("| :--- | ---: | ---: | ---: | :--- |")
+        for row in error_examples:
+            lines.append(
+                f"| {row['method']} | {row['label']} | {row['prediction']} | "
+                f"{float(row['prob_positive']):.3f} | {truncate_text(row['text'])} |"
+            )
+        lines.append("")
+    lines.append("局限性：当前最终可复现实验采用 CPU 友好的 lexical/hash 特征实现，能够稳定复现消融结论，但对跨句语义、反讽和表情组合的建模能力弱于完整 BERT/RoBERTa 深度微调。后续可在保留同一数据 split 的前提下加入上下文编码器，并用困难样本主动学习验证改进。")
+    lines.append("")
+    lines.append("## 7. 复现与交付")
     lines.append("")
     lines.append("核心命令：")
     lines.append("")
@@ -135,7 +200,7 @@ def build_markdown() -> str:
     lines.append("- `results/final_metrics_chart.png`")
     lines.append("- `report/final_report.md` / `report/final_report.pdf`")
     lines.append("")
-    lines.append("## 7. AI 工具使用声明")
+    lines.append("## 8. AI 工具使用声明")
     lines.append("")
     lines.append("项目使用 ChatGPT/Codex 辅助代码补全、实验脚本整理、报告生成与调试；数据处理、指标解释和最终结论均以本地可复现运行结果为准。")
     lines.append("")
@@ -149,7 +214,7 @@ def build_pdf(markdown: str) -> None:
         from reportlab.lib.styles import ParagraphStyle
         from reportlab.lib.units import mm
         from reportlab.platypus import Image as RLImage
-        from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+        from reportlab.platypus import KeepTogether, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
         from reportlab.pdfbase import pdfmetrics
         from reportlab.pdfbase.ttfonts import TTFont
     except Exception as exc:
@@ -178,9 +243,17 @@ def build_pdf(markdown: str) -> None:
         "Title", parent=base, fontSize=17, leading=22, spaceAfter=8,
         textColor=colors.HexColor("#0f172a"),
     )
+    subtitle = ParagraphStyle(
+        "Subtitle", parent=base, fontSize=10.5, leading=15, spaceAfter=8,
+        textColor=colors.HexColor("#334155"),
+    )
     h2 = ParagraphStyle(
-        "H2", parent=base, fontSize=12, leading=16, spaceBefore=8, spaceAfter=5,
+        "H2", parent=base, fontSize=12.5, leading=16.5, spaceBefore=9, spaceAfter=5,
         textColor=colors.HexColor("#1f2937"),
+    )
+    caption = ParagraphStyle(
+        "Caption", parent=base, fontSize=8, leading=10, alignment=1,
+        textColor=colors.HexColor("#475569"), spaceBefore=3, spaceAfter=5,
     )
     small = ParagraphStyle("Small", parent=base, fontSize=7.4, leading=9.2)
     cell = ParagraphStyle("Cell", parent=base, fontSize=7.3, leading=9.0)
@@ -246,14 +319,35 @@ def build_pdf(markdown: str) -> None:
         "E5": "过滤强领域特异 n-gram，模拟对抗域约束。",
         "E6": "扩大 char1-5 特征空间作为 backbone 替换。",
     }
+    error_examples = load_error_examples()
 
     story = []
-    story.append(rich("社交媒体情感分析的跨域泛化：最终项目报告", title))
-    story.append(p("项目名称：面向分布偏移的 Data-Centric 跨域情感分类"))
-    story.append(p("团队成员：李乘黄、马啸、THAM WAN HEI、化润宇"))
-    story.append(p("最终交付日期：2026-06-03"))
-    story.append(p("仓库链接：https://github.com/MarBarb/sentiment-cross-domain"))
-    story.append(Spacer(1, 4))
+    story.append(rich("数据挖掘课程最终项目报告", title))
+    story.append(rich("社交媒体情感分析的跨域泛化：面向分布偏移的 Data-Centric 改进", subtitle))
+    story.append(table(
+        [
+            ["项目名称", "面向分布偏移的 Data-Centric 跨域情感分类"],
+            ["团队成员", "李乘黄、马啸、THAM WAN HEI、化润宇"],
+            ["仓库链接", "https://github.com/MarBarb/sentiment-cross-domain"],
+            ["最终交付日期", "2026-06-03"],
+            ["复现命令", "./scripts/run_final.sh && python scripts/verify_final.py"],
+        ],
+        [28 * mm, 142 * mm],
+        align_right_from=None,
+    ))
+    story.append(Spacer(1, 6))
+
+    story.append(rich("摘要", h2))
+    story.append(p(
+        "本项目研究评论源域到微博社交媒体目标域的二分类情感迁移问题。"
+        "我们使用真实公开语料构造源域 8000 条、目标域 6000 条数据，围绕弱监督伪标注、"
+        "少量目标域校准、领域特征过滤和 backbone 替换设计 E0-E6 消融实验。"
+        f"结果显示，{best['method_id']} {best['method']} 在目标域取得最高 Macro-F1="
+        f"{fmt(best['F1_t_mean'])}，{best_balanced['method_id']} {best_balanced['method']} 的 DeltaF1="
+        f"{fmt(best_balanced['deltaF1_mean'])} 最平衡。失败分析表明，微博中的转发链、表情、"
+        "反讽和局部情感词冲突仍是浅层特征方法的主要误差来源。"
+    ))
+    story.append(p("关键词：跨域情感分析；领域偏移；弱监督；消融实验；Macro-F1", small))
 
     story.append(rich("1. 问题定义与目标", h2))
     story.append(p(
@@ -264,25 +358,32 @@ def build_pdf(markdown: str) -> None:
     story.append(p("验收指标包括 Macro-F1、Weighted-F1、AUC、DeltaF1、目标域负面召回率，以及 KL/MMD 分布诊断。"))
 
     story.append(rich("2. 数据来源与审计", h2))
-    story.append(table(
-        [
-            ["域", "raw rows", "processed", "train", "val", "test", "unlabeled", "正例比例", "平均长度"],
-            ["源域 waimai", source["raw_rows"], source["sampled_rows"], s["train"]["n"], s["val"]["n"], s["test"]["n"], 0, f"{s['train']['positive_rate']:.1%}", f"{s['train']['avg_chars']:.1f}"],
-            ["目标域 weibo", target["raw_rows"], target["sampled_rows"], t["train"]["n"], t["val"]["n"], t["test"]["n"], t["unlabeled"]["n"], f"{t['train']['positive_rate']:.1%}", f"{t['train']['avg_chars']:.1f}"],
-        ],
-        [28 * mm, 18 * mm, 20 * mm, 16 * mm, 16 * mm, 16 * mm, 21 * mm, 18 * mm, 18 * mm],
-    ))
+    story.append(p("表 1 数据集规模与划分", caption))
+    story.append(KeepTogether([
+        table(
+            [
+                ["域", "raw rows", "processed", "train", "val", "test", "unlabeled", "正例比例", "平均长度"],
+                ["源域 waimai", source["raw_rows"], source["sampled_rows"], s["train"]["n"], s["val"]["n"], s["test"]["n"], 0, f"{s['train']['positive_rate']:.1%}", f"{s['train']['avg_chars']:.1f}"],
+                ["目标域 weibo", target["raw_rows"], target["sampled_rows"], t["train"]["n"], t["val"]["n"], t["test"]["n"], t["unlabeled"]["n"], f"{t['train']['positive_rate']:.1%}", f"{t['train']['avg_chars']:.1f}"],
+            ],
+            [28 * mm, 18 * mm, 20 * mm, 16 * mm, 16 * mm, 16 * mm, 21 * mm, 18 * mm, 18 * mm],
+        )
+    ]))
     story.append(Spacer(1, 4))
     story.append(p("源域使用 ChineseNlpCorpus waimai_10k；目标域使用 HuggingFace dirtycomputer/weibo_senti_100k。下载 URL 记录在 results/final_data_audit.json 中。", small))
     story.append(p("目标域按负:正=2:1 构造，仅 10% 作为有标注训练集，60% 作为未标注数据用于弱监督伪标注。"))
 
     story.append(rich("3. 方法与消融矩阵", h2))
-    story.append(table(
-        [["ID", "方法", "说明"]]
-        + [[row["method_id"], method_notes[row["method_id"]], method_desc[row["method_id"]]] for row in summary],
-        [12 * mm, 50 * mm, 108 * mm],
-        align_right_from=None,
-    ))
+    story.append(p("表 2 方法与消融设置", caption))
+    story.append(KeepTogether([
+        table(
+            [["ID", "方法", "说明"]]
+            + [[row["method_id"], method_notes[row["method_id"]], method_desc[row["method_id"]]] for row in summary],
+            [12 * mm, 50 * mm, 108 * mm],
+            align_right_from=None,
+        )
+    ]))
+    story.append(PageBreak())
 
     story.append(rich("4. 最终实验结果", h2))
     story.append(p("所有结果均为 3 个随机种子（42/123/456）的均值与标准差。"))
@@ -298,16 +399,20 @@ def build_pdf(markdown: str) -> None:
             fmt(row["recall_positive_t_mean"]),
             fmt(row["weighted_f1_t_mean"]),
         ])
-    story.append(table(
-        result_rows,
-        [12 * mm, 25 * mm, 25 * mm, 25 * mm, 18 * mm, 20 * mm, 20 * mm, 26 * mm],
-    ))
+    story.append(p("表 3 最终实验指标汇总", caption))
+    story.append(KeepTogether([
+        table(
+            result_rows,
+            [12 * mm, 25 * mm, 25 * mm, 25 * mm, 18 * mm, 20 * mm, 20 * mm, 26 * mm],
+        )
+    ]))
     chart_path = ROOT / "results/final_metrics_chart.png"
     if chart_path.exists():
-        story.append(Spacer(1, 6))
-        img = RLImage(str(chart_path), width=170 * mm, height=96 * mm)
+        story.append(Spacer(1, 8))
+        img = RLImage(str(chart_path), width=158 * mm, height=89 * mm)
         img.hAlign = "LEFT"
         story.append(img)
+        story.append(p("图 1 最终实验结果对比", caption))
     story.append(p(
         f"目标域 F1 最佳方法为 {best['method_id']} {best['method']}，F1(target)={fmt(best['F1_t_mean'])}，"
         f"负面召回={fmt(best['recall_negative_t_mean'])}。DeltaF1 最平衡方法为 "
@@ -317,14 +422,37 @@ def build_pdf(markdown: str) -> None:
         "结论：少量目标域金标校准（E3）收益最大；弱监督伪标注（E2）显著提升目标域 F1；"
         "E5 虽然降低了 MMD，但过度过滤削弱正例召回，是负向消融。"
     ))
+    story.append(PageBreak())
 
-    story.append(rich("5. 错误分析", h2))
+    story.append(rich("5. 失败案例与局限分析", h2))
     for item in [
         "微博文本中大量转发链、表情和反讽表达，线性 n-gram 模型容易把局部正向词误判为整体正向。",
         "“祝福/哈哈/鼓掌”等词在不同语境下可能同时出现在正负样本中，造成词面冲突。",
         "领域特征过滤能降低 MMD，但过滤过强会删除目标域关键情感触发词。",
     ]:
         story.append(p(f"• {item}"))
+    if error_examples:
+        story.append(p("表 4 失败案例摘录", caption))
+        story.append(table(
+            [["方法", "真实", "预测", "正类概率", "文本摘录"]]
+            + [
+                [
+                    row["method"],
+                    row["label"],
+                    row["prediction"],
+                    f"{float(row['prob_positive']):.3f}",
+                    truncate_text(row["text"], 70),
+                ]
+                for row in error_examples
+            ],
+            [24 * mm, 14 * mm, 14 * mm, 20 * mm, 98 * mm],
+            align_right_from=1,
+        ))
+    story.append(p(
+        "局限性：当前最终可复现实验采用 CPU 友好的 lexical/hash 特征实现，能够稳定复现消融结论，"
+        "但对跨句语义、反讽和表情组合的建模能力弱于完整 BERT/RoBERTa 深度微调。后续可在保留同一数据 split "
+        "的前提下加入上下文编码器，并用困难样本主动学习验证改进。"
+    ))
 
     story.append(rich("6. 复现与交付", h2))
     story.append(rich("./scripts/run_final.sh<br/>python scripts/verify_final.py", code))
@@ -342,13 +470,19 @@ def build_pdf(markdown: str) -> None:
         bottomMargin=12 * mm,
     )
 
-    def draw_background(canvas, _doc):
+    def draw_page(canvas, doc_obj):
         canvas.saveState()
         canvas.setFillColor(colors.white)
         canvas.rect(0, 0, A4[0], A4[1], fill=1, stroke=0)
+        canvas.setTitle("社交媒体情感分析的跨域泛化：最终项目报告")
+        canvas.setAuthor("李乘黄、马啸、THAM WAN HEI、化润宇")
+        canvas.setFont(font_name, 7.5)
+        canvas.setFillColor(colors.HexColor("#64748b"))
+        canvas.drawString(15 * mm, 7 * mm, "社交媒体情感分析的跨域泛化")
+        canvas.drawRightString(A4[0] - 15 * mm, 7 * mm, f"第 {doc_obj.page} 页")
         canvas.restoreState()
 
-    doc.build(story, onFirstPage=draw_background, onLaterPages=draw_background)
+    doc.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
 
 
 def main() -> None:
