@@ -2,6 +2,7 @@
 import pytest
 import numpy as np
 from src.evaluation.metrics import compute_metrics, find_optimal_threshold
+from src.evaluation.kappa import compute_cohens_kappa
 
 
 class TestMetrics:
@@ -50,3 +51,19 @@ class TestThresholdSearch:
         f1_t = 0.7
         delta = f1_s - f1_t
         assert delta > 0  # 正常迁移后应为正
+
+class TestKappa:
+    """测试 Cohen's Kappa 一致性系数计算"""
+
+    def test_perfect_agreement(self):
+        y1 = [1, 0, 1, 1, 0]
+        y2 = [1, 0, 1, 1, 0]
+        assert abs(compute_cohens_kappa(y1, y2) - 1.0) < 1e-5
+
+    def test_complete_disagreement(self):
+        y1 = [1, 1, 1, 1]
+        y2 = [0, 0, 0, 0]
+        assert compute_cohens_kappa(y1, y2) == 0.0
+
+    def test_empty_input(self):
+        assert compute_cohens_kappa([], []) == 0.0
