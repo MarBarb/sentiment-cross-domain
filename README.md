@@ -81,6 +81,7 @@ python run.py experiment=baseline
 核心入口：
 
 ```bash
+python scripts/audit_dataset.py
 python run.py experiment=final
 python scripts/generate_final_report.py
 python scripts/verify_final.py

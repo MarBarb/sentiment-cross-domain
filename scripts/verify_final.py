@@ -35,6 +35,7 @@ def main() -> None:
     target = ROOT / "data/processed/social_full.csv"
     metrics_path = ROOT / "results/final_metrics.json"
     summary_path = ROOT / "results/final_summary.csv"
+    audit_path = ROOT / "results/dataset_audit.json"
     report_md = ROOT / "report/final_report.md"
     report_pdf = ROOT / "report/final_report.pdf"
 
@@ -42,6 +43,7 @@ def main() -> None:
     require(target.exists(), "social_full.csv exists")
     require(metrics_path.exists(), "final_metrics.json exists")
     require(summary_path.exists(), "final_summary.csv exists")
+    require(audit_path.exists(), "dataset_audit.json exists")
     require(report_pdf.exists() and report_pdf.stat().st_size > 50_000, "final_report.pdf exists and is non-empty")
 
     source_counts = count_splits(source)
@@ -52,6 +54,9 @@ def main() -> None:
     require(target_counts["train"] > 0 and target_counts["val"] > 0 and target_counts["test"] > 0, "target train/val/test present")
 
     payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    require(audit.get("passed") is True, "dataset audit passed")
+
     runs_by_method = defaultdict(list)
     for run in payload["runs"]:
         runs_by_method[run["method_id"]].append(run)

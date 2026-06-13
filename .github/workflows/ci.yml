@@ -1,0 +1,37 @@
+name: Reproducibility Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  final-handoff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install lightweight dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pillow pytest
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Audit processed datasets
+        run: python scripts/audit_dataset.py
+
+      - name: Re-run final experiment matrix
+        run: python run.py experiment=final --output-dir /tmp/final-check
+
+      - name: Verify committed final artifacts
+        run: python scripts/verify_final.py

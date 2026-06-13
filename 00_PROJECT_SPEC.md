@@ -29,6 +29,33 @@ L = E_{(x,y)~D_t^L} [ ℓ(f_θ(x), y) ] + λ · KL( P_s(φ(x)) ‖ P_t(φ(x)) )
 | IMDB | 源域训练/跨域测试 | 50k 样本 | 长文本(~230词), 均衡二分类 |
 | 社会事件评论 | 目标域 | 预计 5k+ 有效 | 中等长度(~40词), 负面偏重(约2:1~4:1) |
 
+## ✅ 最终落地说明
+
+最终交付版在保留 BERT/RoBERTa、KL 对齐和训练器骨架的基础上，采用 CPU 友好的
+lexical/hash 特征实现完整可复现实验矩阵。这样做的原因是课程验收环境未必有 GPU、
+外部服务账号或稳定网络，因此最终主路径优先保证“可复跑、可检查、可答辩”。
+
+最终数据与开题设想有两点调整：
+
+- 源域落地为 ChineseNlpCorpus `waimai_10k` 外卖评论，处理后 8000 条。
+- 目标域落地为 HuggingFace `dirtycomputer/weibo_senti_100k` 微博情感数据，处理后
+  6000 条，其中 3600 条作为 unlabeled split 支撑弱监督伪标注。
+
+最终可运行命令：
+
+```bash
+python scripts/audit_dataset.py
+./scripts/run_final.sh
+python scripts/verify_final.py
+```
+
+当前主分支的验收状态：
+
+- `python -m pytest -q`：32 passed, 5 skipped。
+- `scripts/audit_dataset.py`：检查 source/target split、类别比例、unlabeled 规模和数据契约。
+- `scripts/verify_final.py`：检查 E0-E6、3 seeds、最终报告、数据审计和达标指标。
+- GitHub Actions 使用轻量依赖复跑测试、数据审计、最终实验矩阵和最终验收脚本。
+
 ## 🧮 技术栈
 
 - **Framework**: PyTorch 2.3+, HuggingFace Transformers
