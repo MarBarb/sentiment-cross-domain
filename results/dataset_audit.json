@@ -1,0 +1,141 @@
+{
+  "passed": true,
+  "source": {
+    "path": "data/processed/source_full.csv",
+    "rows": 8000,
+    "domains": [
+      "waimai_review"
+    ],
+    "splits": {
+      "test": {
+        "rows": 1200,
+        "positive": 600,
+        "negative": 600,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.5,
+        "avg_chars": 22.275
+      },
+      "train": {
+        "rows": 5600,
+        "positive": 2800,
+        "negative": 2800,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.5,
+        "avg_chars": 22.873392857142857
+      },
+      "val": {
+        "rows": 1200,
+        "positive": 600,
+        "negative": 600,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.5,
+        "avg_chars": 22.98
+      }
+    },
+    "duplicate_text_split_domain_rows": 2,
+    "issues": []
+  },
+  "target": {
+    "path": "data/processed/social_full.csv",
+    "rows": 6000,
+    "domains": [
+      "weibo_social"
+    ],
+    "splits": {
+      "test": {
+        "rows": 1200,
+        "positive": 400,
+        "negative": 800,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 54.52166666666667
+      },
+      "train": {
+        "rows": 600,
+        "positive": 200,
+        "negative": 400,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 51.925
+      },
+      "unlabeled": {
+        "rows": 3600,
+        "positive": 1200,
+        "negative": 2400,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 53.653333333333336
+      },
+      "val": {
+        "rows": 600,
+        "positive": 200,
+        "negative": 400,
+        "missing_label": 0,
+        "invalid_label": 0,
+        "positive_rate": 0.3333333333333333,
+        "avg_chars": 56.01
+      }
+    },
+    "duplicate_text_split_domain_rows": 1,
+    "issues": []
+  },
+  "checks": [
+    {
+      "ok": true,
+      "message": "source rows >= 8000"
+    },
+    {
+      "ok": true,
+      "message": "target rows >= 5000"
+    },
+    {
+      "ok": true,
+      "message": "source split present: train"
+    },
+    {
+      "ok": true,
+      "message": "source split present: val"
+    },
+    {
+      "ok": true,
+      "message": "source split present: test"
+    },
+    {
+      "ok": true,
+      "message": "target split present: train"
+    },
+    {
+      "ok": true,
+      "message": "target split present: val"
+    },
+    {
+      "ok": true,
+      "message": "target split present: test"
+    },
+    {
+      "ok": true,
+      "message": "target split present: unlabeled"
+    },
+    {
+      "ok": true,
+      "message": "target unlabeled rows >= 3000"
+    },
+    {
+      "ok": true,
+      "message": "target train positive rate in expected imbalanced range"
+    },
+    {
+      "ok": true,
+      "message": "no schema or split issues"
+    }
+  ],
+  "notes": [
+    "target unlabeled rows keep public labels for audit reproducibility; training code must use unlabeled text only"
+  ]
+}
