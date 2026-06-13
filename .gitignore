@@ -175,6 +175,10 @@ data/raw/*.csv
 # Local generated presentation workspaces; final handoff files live in presentation/
 outputs/
 
+# Local unpacked defense package; the canonical tracked materials live in presentation/
+报告(1)/
+报告(1).zip
+
 # macOS Finder metadata
 .DS_Store
 

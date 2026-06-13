@@ -32,11 +32,14 @@ pip install -r requirements.txt
 python scripts/verify_final.py
 ```
 
-如果使用 Codex 桌面环境的内置 Python：
+完整 E0-E6 × 3 seeds 实验在普通笔记本 CPU 上通常约 2-3 分钟完成；首次运行如果
+`data/raw/` 中没有原始公开 CSV，需要联网下载数据。
+
+如果本机默认 `python3` 不是项目环境，可以通过 `PYTHON` 指定解释器：
 
 ```bash
-PYTHON=/Users/lichenghuang/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 ./scripts/run_final.sh
-PYTHON=/Users/lichenghuang/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/verify_final.py
+PYTHON=/path/to/python3 ./scripts/run_final.sh
+PYTHON=/path/to/python3 scripts/verify_final.py
 ```
 
 兼容项目规范中的 baseline 命令：
